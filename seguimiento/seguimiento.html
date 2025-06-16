@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Seguimiento Diario - Miguel</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+        .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        button { padding: 10px 20px; border: none; background: #227733; color: white; border-radius: 6px; cursor: pointer; }
+        #logs { white-space: pre-wrap; background: #eee; padding: 10px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Seguimiento Diario – Miguel</h1>
+
+    <div class="card">
+        <h2>📍 Hora de acceso</h2>
+        <p id="hora"></p>
+    </div>
+
+    <div class="card">
+        <h2>🚶 Acelerómetro (detectar movimiento)</h2>
+        <button onclick="iniciarAcelerometro()">Iniciar</button>
+        <div id="acelerometro">Esperando lectura...</div>
+    </div>
+
+    <div class="card">
+        <h2>🧠 Registro emocional diario</h2>
+        <textarea id="estadoEmocional" rows="5" style="width:100%"></textarea><br><br>
+        <button onclick="guardarEmocional()">Guardar</button>
+        <p><strong>Último registro:</strong></p>
+        <div id="logs"></div>
+    </div>
+
+    <div class="card">
+    	<h2><a href="https://miguelangelkatofull.github.io/sitio_miguel_sensores/">Regresar Principal</h2
+    </div>
+
+    <script>
+        document.getElementById("hora").textContent = new Date().toLocaleString();
+
+        function iniciarAcelerometro() {
+            if (window.DeviceMotionEvent) {
+                window.addEventListener("devicemotion", (event) => {
+                    const x = event.acceleration.x?.toFixed(2);
+                    const y = event.acceleration.y?.toFixed(2);
+                    const z = event.acceleration.z?.toFixed(2);
+                    document.getElementById("acelerometro").textContent = `Movimiento detectado: x=${x}, y=${y}, z=${z}`;
+                });
+            } else {
+                document.getElementById("acelerometro").textContent = "Tu navegador no soporta esta función.";
+            }
+        }
+
+        function guardarEmocional() {
+            const entrada = document.getElementById("estadoEmocional").value;
+            const fecha = new Date().toLocaleString();
+            const registro = `${fecha} - ${entrada}
+`;
+            const existentes = localStorage.getItem("bitacora") || "";
+            localStorage.setItem("bitacora", registro + existentes);
+            mostrarLogs();
+        }
+
+        function mostrarLogs() {
+            const logs = localStorage.getItem("bitacora") || "Sin registros aún.";
+            document.getElementById("logs").textContent = logs;
+        }
+
+        mostrarLogs();
+    </script>
+</body>
+</html>
